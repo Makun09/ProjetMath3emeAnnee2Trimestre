@@ -19,7 +19,6 @@ public class Matrix4x4Custom
         M41 = m41; M42 = m42; M43 = m43; M44 = m44;
     }
 
-    // Produit matriciel 4x4
     public Matrix4x4Custom Multiply(Matrix4x4Custom other)
     {
         return new Matrix4x4Custom(
@@ -53,6 +52,63 @@ public class Matrix4x4Custom
             M31 * vector.X + M32 * vector.Y + M33 * vector.Z + M34 * vector.W,
             M41 * vector.X + M42 * vector.Y + M43 * vector.Z + M44 * vector.W
         );
+    }
+    
+    public QuaternionCustom ToQuaternion()
+    {
+        if (!IsQuaternionMatrix())
+            throw new Exception("Cette matrice ne correspond pas à une matrice de quaternion valide.");
+
+        return new QuaternionCustom(M11, M21, M31, M41);
+    }
+    
+    public bool IsQuaternionMatrix(double tolerance = 0.0001)
+    {
+        bool row1 = AreApproximatelyEqual(M12, -M21, tolerance) &&
+                    AreApproximatelyEqual(M13, -M31, tolerance) &&
+                    AreApproximatelyEqual(M14, -M41, tolerance);
+
+        bool row2 = AreApproximatelyEqual(M22, M11, tolerance) &&
+                    AreApproximatelyEqual(M23, -M41, tolerance) &&
+                    AreApproximatelyEqual(M24, M31, tolerance);
+
+        bool row3 = AreApproximatelyEqual(M32, M41, tolerance) &&
+                    AreApproximatelyEqual(M33, M11, tolerance) &&
+                    AreApproximatelyEqual(M34, -M21, tolerance);
+
+        bool row4 = AreApproximatelyEqual(M42, -M31, tolerance) &&
+                    AreApproximatelyEqual(M43, M21, tolerance) &&
+                    AreApproximatelyEqual(M44, M11, tolerance);
+
+        return row1 && row2 && row3 && row4;
+    }
+    
+    public bool ApproximatelyEquals(Matrix4x4Custom other, double tolerance = 0.0001)
+    {
+        return AreApproximatelyEqual(M11, other.M11, tolerance) &&
+               AreApproximatelyEqual(M12, other.M12, tolerance) &&
+               AreApproximatelyEqual(M13, other.M13, tolerance) &&
+               AreApproximatelyEqual(M14, other.M14, tolerance) &&
+
+               AreApproximatelyEqual(M21, other.M21, tolerance) &&
+               AreApproximatelyEqual(M22, other.M22, tolerance) &&
+               AreApproximatelyEqual(M23, other.M23, tolerance) &&
+               AreApproximatelyEqual(M24, other.M24, tolerance) &&
+
+               AreApproximatelyEqual(M31, other.M31, tolerance) &&
+               AreApproximatelyEqual(M32, other.M32, tolerance) &&
+               AreApproximatelyEqual(M33, other.M33, tolerance) &&
+               AreApproximatelyEqual(M34, other.M34, tolerance) &&
+
+               AreApproximatelyEqual(M41, other.M41, tolerance) &&
+               AreApproximatelyEqual(M42, other.M42, tolerance) &&
+               AreApproximatelyEqual(M43, other.M43, tolerance) &&
+               AreApproximatelyEqual(M44, other.M44, tolerance);
+    }
+    
+    private bool AreApproximatelyEqual(double a, double b, double tolerance)
+    {
+        return System.Math.Abs(a - b) < tolerance;
     }
 
     public static Matrix4x4Custom Identity()

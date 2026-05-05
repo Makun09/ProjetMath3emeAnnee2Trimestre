@@ -64,6 +64,79 @@ public class QuaternionCustom
 
         return new QuaternionCustom(W / norm, X / norm, Y / norm, Z / norm);
     }
+    
+    public Matrix4x4Custom ToMatrix4x4()
+    {
+        return new Matrix4x4Custom(
+            W, -X, -Y, -Z,
+            X,  W, -Z,  Y,
+            Y,  Z,  W, -X,
+            Z, -Y,  X,  W
+        );
+    }
+    
+    public static QuaternionCustom FromAxisAngle(Vector3Custom axis, double angleDegrees)
+    {
+        Vector3Custom normalizedAxis = axis.Normalize();
+
+        double angleRadians = angleDegrees * System.Math.PI / 180.0;
+        double halfAngle = angleRadians / 2.0;
+
+        double w = System.Math.Cos(halfAngle);
+        double sinHalfAngle = System.Math.Sin(halfAngle);
+
+        double x = normalizedAxis.X * sinHalfAngle;
+        double y = normalizedAxis.Y * sinHalfAngle;
+        double z = normalizedAxis.Z * sinHalfAngle;
+
+        return new QuaternionCustom(w, x, y, z).Normalize();
+    }
+    
+    public Matrix3x3 ToRotationMatrix3x3()
+    {
+        QuaternionCustom q = Normalize();
+
+        double w = q.W;
+        double x = q.X;
+        double y = q.Y;
+        double z = q.Z;
+
+        return new Matrix3x3(
+            1 - 2 * y * y - 2 * z * z,
+            2 * x * y - 2 * z * w,
+            2 * x * z + 2 * y * w,
+
+            2 * x * y + 2 * z * w,
+            1 - 2 * x * x - 2 * z * z,
+            2 * y * z - 2 * x * w,
+
+            2 * x * z - 2 * y * w,
+            2 * y * z + 2 * x * w,
+            1 - 2 * x * x - 2 * y * y
+        );
+    }
+    
+    public Vector3Custom RotatePoint(Vector3Custom point)
+    {
+        QuaternionCustom q = Normalize();
+
+        QuaternionCustom pointQuaternion = new QuaternionCustom(
+            0,
+            point.X,
+            point.Y,
+            point.Z
+        );
+
+        QuaternionCustom rotatedQuaternion = q
+            .Multiply(pointQuaternion)
+            .Multiply(q.Conjugate());
+
+        return new Vector3Custom(
+            rotatedQuaternion.X,
+            rotatedQuaternion.Y,
+            rotatedQuaternion.Z
+        );
+    }
 
     public bool IsUnit(double tolerance = 0.0001)
     {
