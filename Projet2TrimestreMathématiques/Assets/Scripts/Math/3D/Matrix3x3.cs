@@ -102,6 +102,35 @@ public class Matrix3x3
                AreApproximatelyEqual(M32, other.M32, tolerance) &&
                AreApproximatelyEqual(M33, other.M33, tolerance);
     }
+    
+    public static Matrix3x3 FromAxisAngle(Vector3Custom axis, double angleDegrees)
+    {
+        Vector3Custom normalizedAxis = axis.Normalize();
+
+        double x = normalizedAxis.X;
+        double y = normalizedAxis.Y;
+        double z = normalizedAxis.Z;
+
+        double angleRadians = angleDegrees * System.Math.PI / 180.0;
+
+        double cos = System.Math.Cos(angleRadians);
+        double sin = System.Math.Sin(angleRadians);
+        double oneMinusCos = 1.0 - cos;
+
+        return new Matrix3x3(
+            cos + x * x * oneMinusCos,
+            x * y * oneMinusCos - z * sin,
+            x * z * oneMinusCos + y * sin,
+
+            y * x * oneMinusCos + z * sin,
+            cos + y * y * oneMinusCos,
+            y * z * oneMinusCos - x * sin,
+
+            z * x * oneMinusCos - y * sin,
+            z * y * oneMinusCos + x * sin,
+            cos + z * z * oneMinusCos
+        );
+    }
 
     private bool AreApproximatelyEqual(double a, double b, double tolerance)
     {

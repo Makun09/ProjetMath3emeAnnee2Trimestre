@@ -11,8 +11,8 @@ public class RotationComparisonDemo : MonoBehaviour
 
     [Header("Rotation")]
     public double rotationSpeed = 45.0;
-    public Vector3Custom rotationAxis = new Vector3Custom(0, 1, 0);
-
+    public Vector3 rotationAxis = new Vector3(0, 1, 0);
+    
     [Header("Logs opérations")]
     public bool showOperationLogs = true;
     public float logInterval = 2.0f;
@@ -22,10 +22,22 @@ public class RotationComparisonDemo : MonoBehaviour
 
     void Update()
     {
+        if (rotationAxis == Vector3.zero)
+        {
+            return;
+        }
+        
         currentAngle += rotationSpeed * Time.deltaTime;
+        
+        Vector3Custom customAxis = new Vector3Custom(
+            rotationAxis.x,
+            rotationAxis.y,
+            rotationAxis.z
+        );
 
-        QuaternionCustom rotationQuaternion = QuaternionCustom.FromAxisAngle(rotationAxis, currentAngle);
-        Matrix3x3 rotationMatrix = rotationQuaternion.ToRotationMatrix3x3();
+        QuaternionCustom rotationQuaternion = QuaternionCustom.FromAxisAngle(customAxis, currentAngle);
+        //Matrix3x3 rotationMatrix = rotationQuaternion.ToRotationMatrix3x3();
+        Matrix3x3 rotationMatrix = Matrix3x3.FromAxisAngle(customAxis, currentAngle);
 
         RotateWithQuaternion(rotationQuaternion);
         RotateWithMatrix(rotationMatrix);
