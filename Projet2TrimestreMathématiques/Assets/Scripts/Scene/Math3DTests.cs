@@ -10,7 +10,7 @@ public class Math3DTests : MonoBehaviour
         //TestQuaternionMatrixConversion();
         //TestCourseExampleRotationAroundOz();
         //TestCourseExampleRotationAxisIJK();
-        TestAdditionalRotationExample();
+        //TestAdditionalRotationExample();
     }
 
     void TestVectors()

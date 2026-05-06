@@ -137,6 +137,17 @@ public class QuaternionCustom
             rotatedQuaternion.Z
         );
     }
+    
+    public Vector3Custom RotatePointAroundPivot(Vector3Custom point, Vector3Custom pivot)
+    {
+        Vector3Custom localPoint = point.Subtract(pivot);
+
+        Vector3Custom rotatedLocalPoint = RotatePoint(localPoint);
+
+        Vector3Custom finalPoint = rotatedLocalPoint.Add(pivot);
+
+        return finalPoint;
+    }
 
     public bool IsUnit(double tolerance = 0.0001)
     {

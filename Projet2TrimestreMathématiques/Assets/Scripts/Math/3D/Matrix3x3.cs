@@ -131,6 +131,17 @@ public class Matrix3x3
             cos + z * z * oneMinusCos
         );
     }
+    
+    public Vector3Custom RotatePointAroundPivot(Vector3Custom point, Vector3Custom pivot)
+    {
+        Vector3Custom localPoint = point.Subtract(pivot);
+
+        Vector3Custom rotatedLocalPoint = Multiply(localPoint);
+
+        Vector3Custom finalPoint = rotatedLocalPoint.Add(pivot);
+
+        return finalPoint;
+    }
 
     private bool AreApproximatelyEqual(double a, double b, double tolerance)
     {
